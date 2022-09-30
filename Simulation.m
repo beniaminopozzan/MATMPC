@@ -15,8 +15,8 @@ disp( ' ' );
 disp('---------------------------------------------------------------------------------');
 
 %% Configuration (complete your configuration here...)
-if exist('settings','file')==2
-    load settings
+if isfile("data/settings.mat")
+    load data/settings.mat
 else
     error('No setting data is detected!');
 end
