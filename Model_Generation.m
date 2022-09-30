@@ -14,7 +14,6 @@ disp( ' ' );
 disp('---------------------------------------------------------------------------------');
 
 %% Insert Model here
-addpath([pwd,'/examples']);
 
 settings.model='InvertedPendulum'; % see the folder "examples" for details
 
