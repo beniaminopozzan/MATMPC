@@ -31,3 +31,9 @@ codegen/
 
 # Octave session info
 octave-workspace
+
+## PROJECT SPECIFIC GITIGNORE INSTRUCTIONS
+
+data/*
+mex_core/casadi_src.*
+model_src/*
