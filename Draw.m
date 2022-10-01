@@ -8,6 +8,57 @@ green=[0 205 102]/255;
 
 % start generating pictures
 switch settings.model
+
+    case 'iris_quad'
+        
+        if( exist('fig_trj','var') && isgraphics(fig_trj,'figure'))
+            delete(fig_trj);
+        end
+        fig_trj = figure('Name','Trajectories');        
+        t = tiledlayout(2,3);
+        t.TileSpacing = 'tight';
+        
+        nexttile(1);  % position
+        plot(time,state_sim(:,1:3));
+        hold on
+        if opt.ref_type == 2
+            plot(time,data.REF(1:length(time),1:3),'--');
+        elseif opt.ref_type == 0
+            plot(time, [data.REF(1).*ones(length(time),1), data.REF(2).*ones(length(time),1), data.REF(3).*ones(length(time),1)], '--')
+        end
+        grid on
+        ylabel('$p$ [m]');
+        legend('$p_x$','$p_y$','$p_z$')
+        
+        nexttile(4); % quaternion
+        plot(time, rad2deg(quat2eul(state_sim(:,4:7))));
+        hold on
+        set(gca,'ColorOrderIndex',1)
+        plot(time(2:end), rad2deg(y_sim(:,[6,5,4])),'--');
+        %ylim([-1.1 1.1]);
+        grid on
+        ylabel('$eul$');
+        legend("yaw","pitch","roll");
+        
+        nexttile(2);  % linear vel
+        plot(time,state_sim(:,8:10));
+        grid on
+        ylabel('$v$ [m/s]');
+        legend('$v_x$','$v_y$','$v_z$')
+        
+        nexttile(5);  % angular vel
+        plot(time,state_sim(:,11:13));
+        grid on
+        ylabel('$\omega$ [rad/s]');
+        legend('$\omega_x$','$\omega_y$','$\omega_z$')
+        
+        nexttile(3,[2 1]);  % alpha u
+        plot(time,controls_MPC(:,1:4));
+        grid on
+        ylabel('$u$');
+        legend('$u_1$','$u_2$','$u_3$','$u_4$')
+        
+        xlabel(t,'$t$ [s]','interpreter','latex');
     
     case 'InvertedPendulum'
         

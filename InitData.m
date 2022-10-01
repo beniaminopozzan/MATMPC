@@ -1,5 +1,5 @@
 %% Initialize Data
-function [input, data] = InitData(settings)
+function [input, data] = InitData(settings, opt)
 
     nx = settings.nx;       % No. of differential states
     nu = settings.nu;       % No. of controls
@@ -15,6 +15,35 @@ function [input, data] = InitData(settings)
     nbu_idx = settings.nbu_idx;  % Index of control bounds
 
     switch settings.model
+
+        case 'iris_quad'
+            input.x0 = [zeros(3,1);[1;0;0;0];zeros(3,1);zeros(3,1)];    
+            input.u0 = 0.5206*ones(4,1); 
+            input.z0 = zeros(nz,1);
+            para0 = 0;
+            
+            Qp = 5*[1 1 1];
+            Qrpy = [0 0 10];
+            Qq = 0.1*[1 1 1 1];
+            Qv = 1*[1 1 1];
+            Qomega = 0.1*[1 1 2];
+            Qu = [1 1 1 1]*1e-1;
+            Q=repmat([Qp Qrpy Qq Qv Qomega Qu]',1,N);
+            QN=[Qp Qrpy Qq Qv Qomega]';
+
+            % upper and lower bounds for states (=nbx)
+            lb_x = [];
+            ub_x = [];
+
+            % upper and lower bounds for controls (=nbu)           
+            lb_u = 0.01.*ones(4,1); % MIN SPEED AT 10%
+            ub_u = ones(4,1); % MAX SPEED AT 100%
+                       
+            % upper and lower bounds for general constraints (=nc)
+            lb_g = [];
+            ub_g = [];            
+            lb_gN = [];
+            ub_gN = [];
                       
         case 'InvertedPendulum'
             input.x0 = [0;pi;0;0];    
@@ -245,6 +274,21 @@ function [input, data] = InitData(settings)
     %% Reference generation
 
     switch settings.model
+
+        case 'iris_quad'
+          if opt.ref_type == 0
+            p_ref = [0 0 1];
+            rpy_ref = [0 0 0];
+            q_ref = [1 0 0 0];
+            v_ref = [0 0 0];
+            omega_ref = [0 0 0];
+            u_ref = input.u0.';
+            data.REF=[p_ref rpy_ref q_ref v_ref omega_ref u_ref];
+          elseif opt.ref_type ==2
+            trj_quad
+            load('data/reference.mat','reference');
+            data.REF=reference;
+          end
 
         case 'InvertedPendulum'
 
