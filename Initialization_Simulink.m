@@ -31,7 +31,7 @@ nbx_idx = settings.nbx_idx; % Index of state bounds
 %% add more to Settings
 
 N  = 80;
-N2 = 5;
+N2 = N/5;
 r  = 10;
 
 settings.N = N;
@@ -41,8 +41,8 @@ settings.r = r;
 %% options
 opt.hessian='Gauss_Newton';  % 'Gauss_Newton', 'Generalized_Gauss_Newton'
 opt.integrator='ERK4'; % 'ERK4','IRK3, 'IRK3-DAE'
-opt.condensing='default_full';  %'default_full','no','blasfeo_full(require blasfeo installed)','partial_condensing'
-opt.qpsolver='qpoases'; 
+opt.condensing='no';  %'default_full','no','blasfeo_full(require blasfeo installed)','partial_condensing'
+opt.qpsolver='hpipm_sparse'; 
 opt.hotstart='no'; %'yes','no' (only for qpoases)
 opt.shifting='no'; % 'yes','no'
 opt.ref_type=0; % 0-time invariant, 1-time varying(no preview), 2-time varying (preview)
@@ -57,21 +57,27 @@ opt.RTI = 'yes'; % if use Real-time Iteration
  
 %% Initialization
 
-x0 = [0;pi;0;0];    
-u0 = zeros(nu,1); 
+x0 = [zeros(3,1);[1;0;0;0];zeros(3,1);zeros(3,1)];    
+u0 = 0.5206*ones(4,1); 
 z0 = zeros(nz,1);
 para0 = zeros(max(1,np),1);  
 
-W=repmat([10 10 0.1 0.1 0.01]',1,N);
-WN=W(1:nyN,1);
+Qp = 5*[1 1 1];
+Qrpy = [0 0 10];
+Qq = 0.1*[1 1 1 1];
+Qv = 1*[1 1 1];
+Qomega = 0.1*[1 1 2];
+Qu = [1 1 1 1]*1e-1;
+W=repmat([Qp Qrpy Qq Qv Qomega Qu]',1,N);
+WN=[Qp Qrpy Qq Qv Qomega]';
 
 % upper and lower bounds for states (=nbx)
-lb_x = -2;
-ub_x = 2;
+lb_x = [];
+ub_x = [];
 
 % upper and lower bounds for controls (=nbu)           
-lb_u = -20;
-ub_u = 20;
+lb_u = 0.01.*ones(4,1); % MIN SPEED AT 1%
+ub_u = ones(4,1); % MAX SPEED AT 100%
                        
 % upper and lower bounds for general constraints (=nc)
 lb_g = [];

@@ -36,7 +36,7 @@ function [input, data] = InitData(settings, opt)
             ub_x = [];
 
             % upper and lower bounds for controls (=nbu)           
-            lb_u = 0.01.*ones(4,1); % MIN SPEED AT 10%
+            lb_u = 0.01.*ones(4,1); % MIN SPEED AT 1%
             ub_u = ones(4,1); % MAX SPEED AT 100%
                        
             % upper and lower bounds for general constraints (=nc)
