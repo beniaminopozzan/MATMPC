@@ -54,9 +54,9 @@ M = c_tau .* F_temp * diag(c_direction) + ...
 
 % explicit ODE RHS
 x_dot = [
-    Rq*v
+    v
     1/2*Mq*[0;omega]
-    F*u-Rq'*[0;0;g]
+    Rq*F*u-[0;0;g]
     1/JR.* M*u
     du
     ];
