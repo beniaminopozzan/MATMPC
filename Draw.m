@@ -29,34 +29,42 @@ switch settings.model
         grid on
         ylabel('$p$ [m]');
         legend('$p_x$','$p_y$','$p_z$')
+        title('position')
         
-        nexttile(4); % quaternion
-        plot(time, rad2deg(quat2eul(state_sim(:,4:7))));
-        hold on
-        set(gca,'ColorOrderIndex',1)
-        plot(time(2:end), rad2deg(y_sim(:,[6,5,4])),'--');
-        %ylim([-1.1 1.1]);
+        nexttile(4); % ueler angles in deg
+        plot(time(2:end), rad2deg(y_sim(:,[6,5,4])));
         grid on
-        ylabel('$eul$');
+        ylabel('eul [deg]');
         legend("yaw","pitch","roll");
+        title('attitude')
         
         nexttile(2);  % linear vel
         plot(time,state_sim(:,8:10));
         grid on
         ylabel('$v$ [m/s]');
         legend('$v_x$','$v_y$','$v_z$')
+        title('linear vel')
         
         nexttile(5);  % angular vel
         plot(time,state_sim(:,11:13));
         grid on
         ylabel('$\omega$ [rad/s]');
         legend('$\omega_x$','$\omega_y$','$\omega_z$')
+        title('angular vel (body frame)')
+
+        nexttile(3);
+        plot(time,state_sim(:,14:17));
+        grid on
+        ylabel('$u$ []');
+        legend('$u_1$','$u_2$','$u_3$','$u_4$')
+        title('normalized propeller spinning rate square')
         
-        nexttile(3,[2 1]);  % alpha u
+        nexttile(6);
         plot(time,controls_MPC(:,1:4));
         grid on
-        ylabel('$u$');
-        legend('$u_1$','$u_2$','$u_3$','$u_4$')
+        ylabel('$du$');
+        legend('$du_1$','$du_2$','$du_3$','$du_4$')
+        title('input: $du$')
         
         xlabel(t,'$t$ [s]','interpreter','latex');
     

@@ -7,7 +7,7 @@
 
 %% Dimensions
 
-nx=13;  % No. of differential states
+nx=17;  % No. of differential states
 nu=4;  % No. of controls
 nz=0;  % No. of algebraic states
 ny=20; % No. of outputs
@@ -15,11 +15,11 @@ nyN=16; % No. of outputs at the terminal point
 np=0; % No. of model parameters
 nc=0;%0; % No. of general inequality constraints
 ncN=0;%1; % No. of general inequality constraints
-nbx = 0; % No. of bounds on states
+nbx = 4; % No. of bounds on states
 nbu = 4; % No. of bounds on controls
 
 % state and control bounds
-nbx_idx = [];  % indexs of states which are bounded
+nbx_idx = 14:17;  % indexs of states which are bounded
 nbu_idx = 1:4;  % indexs of controls which are bounded
 
 %% create variables
@@ -65,14 +65,19 @@ p=states(1:3);
 q=states(4:7);
 v=states(8:10);
 omega=states(11:13);
-u=controls(1:4); % propeller angular rate square
+u=states(14:17); % propeller angular rates square
+du=controls(1:4); % derivative of propeller angular rates square
 
 % quaternion conversions
 eta = q(1);
 epsilon = q(2:4);
-epsilon_x = [0, -epsilon(3), epsilon(2); epsilon(3), 0, -epsilon(1); -epsilon(2), epsilon(1), 0]; 
+epsilon_x = [
+    0, -epsilon(3), epsilon(2);
+    epsilon(3), 0, -epsilon(1);
+    -epsilon(2), epsilon(1), 0]; 
 Rq = eye(3) + 2*eta*epsilon_x + 2*epsilon_x^2;
-Mq = [eta, -epsilon'; epsilon, eta*eye(3)+epsilon_x];
+Mq = [eta, -epsilon';
+    epsilon, eta*eye(3)+epsilon_x];
 
 % thrust matrix
 
@@ -92,7 +97,12 @@ M = c_tau .* F_temp * diag(c_direction) + ...
 
 
 % explicit ODE RHS
-x_dot = [Rq*v; 1/2*Mq*[0;omega]; F*u-Rq'*[0;0;g]; 1/JR.* M*u];
+x_dot = [
+    Rq*v;
+    1/2*Mq*[0;omega];
+    F*u-Rq'*[0;0;g];
+    1/JR.* M*u;
+    du];
 
 % algebraic function
 z_fun = [];
@@ -116,7 +126,7 @@ h = [
     q
     v
     omega
-    u
+    du
     ];
 hN = h(1:nyN);
 
