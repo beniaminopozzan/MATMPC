@@ -30,8 +30,8 @@ nbx_idx = settings.nbx_idx; % Index of state bounds
 
 %% add more to Settings
 
-N  = 80;
-N2 = N/5;
+N  = 50;
+N2 = N;
 r  = 10;
 
 settings.N = N;
