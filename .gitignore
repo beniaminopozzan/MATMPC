@@ -32,6 +32,9 @@ codegen/
 # Octave session info
 octave-workspace
 
+# simulink bus stufs
++bus_conv_fcns/
+
 ## PROJECT SPECIFIC GITIGNORE INSTRUCTIONS
 
 data/*
