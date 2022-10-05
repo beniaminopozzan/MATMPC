@@ -186,3 +186,5 @@ Q = 1e-2 * ...
     [1; 1; 1]
     [1; 1; 1; 1]
     ];
+
+load data/allocationMat.mat
