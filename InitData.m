@@ -16,6 +16,39 @@ function [input, data] = InitData(settings, opt)
 
     switch settings.model
 
+        case 'iris_quad_rate_control'
+            input.x0 = [
+                zeros(3,1)
+                [1;0;0;0]
+                zeros(3,1)
+                zeros(3,1)
+                ];    
+            input.u0 = zeros(4,1); 
+            input.z0 = zeros(nz,1);
+            para0 = 0;
+            
+            Qp = 5*[1 1 1];
+            Qrpy = [0 0 10];
+            Qq = 0.1*[1 1 1 1];
+            Qv = 1*[1 1 1];
+            Qu = [1 1 1 1]*1e-4;
+            Q=repmat([Qp Qrpy Qq Qv Qu]',1,N);
+            QN=[Qp Qrpy Qq Qv]';
+
+            % upper and lower bounds for states (=nbx)
+            lb_x = []; % MIN SPEED AT 1%
+            ub_x = []; % MAX SPEED AT 100%
+
+            % upper and lower bounds for controls (=nbu)           
+            lb_u = [0 -4 -4 -3];
+            ub_u = [20 4 4 3];
+                       
+            % upper and lower bounds for general constraints (=nc)
+            lb_g = [];
+            ub_g = [];            
+            lb_gN = [];
+            ub_gN = [];
+                      
         case 'iris_quad'
             input.x0 = [
                 zeros(3,1);
@@ -280,6 +313,20 @@ function [input, data] = InitData(settings, opt)
     %% Reference generation
 
     switch settings.model
+
+        case 'iris_quad_rate_control'
+          if opt.ref_type == 0
+            p_ref = [1 1 1];
+            rpy_ref = [0 0 0];
+            q_ref = [1 0 0 0];
+            v_ref = [0 0 0];
+            u_ref = [14.7 0 0 0];
+            data.REF=[p_ref rpy_ref q_ref v_ref u_ref];
+          elseif opt.ref_type ==2
+            trj_quad
+            load('data/reference.mat','reference');
+            data.REF=reference;
+          end
 
         case 'iris_quad'
           if opt.ref_type == 0

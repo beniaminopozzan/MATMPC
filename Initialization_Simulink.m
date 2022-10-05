@@ -62,7 +62,6 @@ x0 = [
     [1;0;0;0]
     zeros(3,1)
     zeros(3,1)
-    0.5206*ones(4,1)
     ];    
 u0 = zeros(4,1); 
 z0 = zeros(nz,1);
@@ -70,20 +69,19 @@ para0 = zeros(max(1,np),1);
 
 Qp = 5*[1 1 1];
 Qrpy = [0 0 10];
-Qq = 0.0*[1 1 1 1];
+Qq = 0.1*[1 1 1 1];
 Qv = 1*[1 1 1];
-Qomega = 0.1*[1 1 2];
-Qdu = [1 1 1 1]*1e-3;
-W=repmat([Qp Qrpy Qq Qv Qomega Qdu]',1,N);
-WN=[Qp Qrpy Qq Qv Qomega]';
+Qu = [1 1 1 1]*1e-1;
+W=repmat([Qp Qrpy Qq Qv Qu]',1,N);
+WN=[Qp Qrpy Qq Qv]';
 
 % upper and lower bounds for states (=nbx)
-lb_x = 0.01.*ones(4,1); % MIN SPEED AT 1%
-ub_x = ones(4,1); % MAX SPEED AT 100%
+lb_x = [];
+ub_x = [];
 
 % upper and lower bounds for controls (=nbu)           
-lb_u = -100*ones(4,1);
-ub_u = 100*ones(4,1);
+lb_u = [0 -4 -4 -3];
+ub_u = [20 4 4 3];
                        
 % upper and lower bounds for general constraints (=nc)
 lb_g = [];
@@ -151,40 +149,40 @@ if isempty(z)
 end
 
 
-%% kalman filter
-
-x0hat = [
-    zeros(3,1)
-    [1;0;0;0]
-    zeros(3,1)
-    zeros(3,1)
-    0.5206*ones(4,1)
-    ];
-
-Q0 = 1e-2 * ...
-    [
-    [1; 1; 1]
-    [1; 1; 1; 1]
-    [1; 1; 1]
-    [1; 1; 1]
-    [1; 1; 1; 1]
-    ];
-
-R = 1e-3 * ...
-    [
-    [1; 1; 1]
-    1e-3 * [1; 1; 1; 1]
-    [1; 1; 1]
-    [1; 1; 1]
-    ];
-
-Q = 1e-2 * ...
-    [
-    [1; 1; 1]
-    [1; 1; 1; 1]
-    [1; 1; 1]
-    [1; 1; 1]
-    [1; 1; 1; 1]
-    ];
-
-load data/allocationMat.mat
+% %% kalman filter
+% 
+% x0hat = [
+%     zeros(3,1)
+%     [1;0;0;0]
+%     zeros(3,1)
+%     zeros(3,1)
+%     0.5206*ones(4,1)
+%     ];
+% 
+% Q0 = 1e-2 * ...
+%     [
+%     [1; 1; 1]
+%     [1; 1; 1; 1]
+%     [1; 1; 1]
+%     [1; 1; 1]
+%     [1; 1; 1; 1]
+%     ];
+% 
+% R = 1e-3 * ...
+%     [
+%     [1; 1; 1]
+%     1e-3 * [1; 1; 1; 1]
+%     [1; 1; 1]
+%     [1; 1; 1]
+%     ];
+% 
+% Q = 1e-2 * ...
+%     [
+%     [1; 1; 1]
+%     [1; 1; 1; 1]
+%     [1; 1; 1]
+%     [1; 1; 1]
+%     [1; 1; 1; 1]
+%     ];
+% 
+% load data/allocationMat.mat

@@ -9,6 +9,64 @@ green=[0 205 102]/255;
 % start generating pictures
 switch settings.model
 
+    case 'iris_quad_rate_control'
+        
+        if( exist('fig_trj','var') && isgraphics(fig_trj,'figure'))
+            delete(fig_trj);
+        end
+        fig_trj = figure('Name','Trajectories');        
+        t = tiledlayout(2,3);
+        t.TileSpacing = 'tight';
+        
+        nexttile(1);  % position
+        plot(time,state_sim(:,1:3));
+        hold on
+        if opt.ref_type == 2
+            plot(time,data.REF(1:length(time),1:3),'--');
+        elseif opt.ref_type == 0
+            plot(time, [data.REF(1).*ones(length(time),1), data.REF(2).*ones(length(time),1), data.REF(3).*ones(length(time),1)], '--')
+        end
+        grid on
+        ylabel('$p$ [m]');
+        legend('$p_x$','$p_y$','$p_z$')
+        title('position')
+        
+        nexttile(4); % ueler angles in deg
+        plot(time(2:end), rad2deg(y_sim(:,[6,5,4])));
+        grid on
+        ylabel('eul [deg]');
+        legend("yaw","pitch","roll");
+        title('attitude')
+        
+        nexttile(2);  % linear vel
+        plot(time,state_sim(:,8:10));
+        grid on
+        ylabel('$v$ [m/s]');
+        legend('$v_x$','$v_y$','$v_z$')
+        title('linear vel')
+        
+        nexttile(5);  % angular vel
+        plot(time,state_sim(:,11:13));
+        grid on
+        ylabel('$\omega$ [rad/s]');
+        legend('$\omega_x$','$\omega_y$','$\omega_z$')
+        title('angular vel (body frame)')
+
+        nexttile(3);
+        plot(time,controls_MPC(:,1));
+        grid on
+        ylabel('$f_z$ [N]');
+        title('input: commont thrust')
+        
+        nexttile(6);
+        plot(time,controls_MPC(:,2:4));
+        grid on
+        ylabel('$\tau$ [Nm]');
+        legend('$\omega_{r,roll}$','$\omega_{r,pitch}$','$\omega_{r,yaw}$')
+        title('input: rate setpoints')
+        
+        xlabel(t,'$t$ [s]','interpreter','latex');
+    
     case 'iris_quad'
         
         if( exist('fig_trj','var') && isgraphics(fig_trj,'figure'))
