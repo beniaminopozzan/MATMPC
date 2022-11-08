@@ -15,7 +15,7 @@ disp('--------------------------------------------------------------------------
 
 %% Insert Model here
 
-settings.model='InvertedPendulum'; % see the folder "examples" for details
+settings.model='S3agent'; % see the folder "examples" for details
 
 run(settings.model);
 

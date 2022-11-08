@@ -35,6 +35,8 @@ nbx = settings.nbx;  % No. of state bounds
 
 %% solver configurations
 
+openLoop = false;
+
 N  = 80;             % No. of shooting points
 settings.N = N;
 
@@ -84,7 +86,7 @@ mem = InitMemory(settings, opt, input);
 %% Simulation (start your simulation...)
 
 mem.iter = 1; time = 0.0;
-Tf = 4;  % simulation time
+Tf = 10;  % simulation time
 state_sim= input.x0';
 controls_MPC = input.u0';
 y_sim = [];
@@ -114,8 +116,13 @@ while time(end) < Tf
     % obtain the state measurement
     input.x0 = state_sim(end,:)';
     
-    % call the NMPC solver 
-    [output, mem] = mpc_nmpcsolver(input, settings, mem, opt);
+    % call the NMPC solver
+    if ~openLoop
+        [output, mem] = mpc_nmpcsolver(input, settings, mem, opt);
+    else
+        output = input;
+    end
+
         
     % obtain the solution and update the data
     switch opt.shifting
@@ -148,15 +155,18 @@ while time(end) < Tf
     end
     
     % collect the statistics
-    cpt=output.info.cpuTime;
-    tshooting=output.info.shootTime;
-    tcond=output.info.condTime;
-    tqp=output.info.qpTime;
-    OptCrit=output.info.OptCrit;
+    if ~openLoop
+        cpt=output.info.cpuTime;
+        tshooting=output.info.shootTime;
+        tcond=output.info.condTime;
+        tqp=output.info.qpTime;
+        OptCrit=output.info.OptCrit;
+    end
     
     % Simulate system dynamics
     sim_input.x = state_sim(end,:).';
     sim_input.u = output.u(:,1);
+    %sim_input.u = [0;0;0];
     sim_input.z = input.z(:,1);
     sim_input.p = input.od(:,1);
 
@@ -172,15 +182,19 @@ while time(end) < Tf
     % store the optimal solution and states
     controls_MPC = [controls_MPC; output.u(:,1)'];
     state_sim = [state_sim; xf'];
-    KKT= [KKT;OptCrit];
-    OBJ= [OBJ;output.info.objValue];
-    CPT = [CPT; cpt, tshooting, tcond, tqp];
-    numIT = [numIT; output.info.iteration_num];
+    if ~openLoop
+        KKT= [KKT;OptCrit];
+        OBJ= [OBJ;output.info.objValue];
+        CPT = [CPT; cpt, tshooting, tcond, tqp];
+        numIT = [numIT; output.info.iteration_num];
+    end
     
     % go to the next sampling instant
     nextTime = mem.iter*Ts; 
     mem.iter = mem.iter+1;
-    disp(['current time:' num2str(nextTime) '  CPT:' num2str(cpt) 'ms  SHOOTING:' num2str(tshooting) 'ms  COND:' num2str(tcond) 'ms  QP:' num2str(tqp) 'ms  Opt:' num2str(OptCrit) '   OBJ:' num2str(OBJ(end)) '  SQP_IT:' num2str(output.info.iteration_num)]);
+    if ~openLoop
+        disp(['current time:' num2str(nextTime) '  CPT:' num2str(cpt) 'ms  SHOOTING:' num2str(tshooting) 'ms  COND:' num2str(tcond) 'ms  QP:' num2str(tqp) 'ms  Opt:' num2str(OptCrit) '   OBJ:' num2str(OBJ(end)) '  SQP_IT:' num2str(output.info.iteration_num)]);
+    end
 %     disp(['current time:' num2str(nextTime) '  CPT:' num2str(cpt) 'ms  SHOOTING:' num2str(tshooting) 'ms  COND:' num2str(tcond) 'ms  QP:' num2str(tqp) 'ms  Opt:' num2str(OptCrit) '   OBJ:' num2str(OBJ(end)) '  SQP_IT:' num2str(output.info.iteration_num) '  Perc:' num2str(mem.perc)]);   
     time = [time nextTime];   
 end

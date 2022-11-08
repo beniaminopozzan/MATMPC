@@ -8,6 +8,66 @@ green=[0 205 102]/255;
 
 % start generating pictures
 switch settings.model
+
+    case 'S3agent'
+        
+        set(groot,'defaultAxesXGrid','on')
+        set(groot,'defaultAxesYGrid','on')
+        set(groot,'defaultAxesYGrid','on')
+
+        q=quaternion(state_sim(:,1:4));
+        qr=quaternion(input.od(:,1).');
+
+        qlog=quatlog(q);
+        qrlog=quatlog(qr);
+
+        [~,b,c,d]=parts(qlog);
+        [~,br,cr,dr]=parts(qrlog);
+
+        angeErr = rad2deg(dist(q,qr));
+
+        figure(1)
+        scatter3(b(1),c(1),d(1),50,quatnorm(qlog(1)),'x',...
+            'LineWidth',3,'DisplayName','IC')
+        hold on
+        scatter3(br(end),cr(end),dr(end),50,quatnorm(qrlog),...
+            'LineWidth',3,'DisplayName','target')
+        scatter3(b,c,d,[],quatnorm(qlog),'.','DisplayName','trj');
+        axis equal
+        grid on
+        %xlim([-1 1])
+        %ylim([-1 1])
+        %zlim([-1 1])
+        xlabel('$i$')
+        ylabel('$j$')
+        zlabel('$k$')
+        title('attitude in 3D: log(q)')
+        legend('Location','best')
+        hold off
+
+        figure(2);
+        tl = tiledlayout(3,1);
+        xlabel(tl, '$t$ [s]', 'interpreter','latex')
+        nexttile
+        plot(time,angeErr)
+        title('angle error')
+        ylabel('[rad]')
+        nexttile
+        plot(time,state_sim(:,5:7));
+        title('angular velocity')
+        ylabel('[rad/s]')
+        nexttile
+        stairs(time,controls_MPC)
+        title('torque')
+        ylabel('[Nm]')
+
+        figure(3)
+        plot(time,quatnorm(q))
+        title('norm of the quaternion')
+        xlabel('$t$ [s]')
+
+        figure(4)
+        semilogy(time(1:end-1),OBJ)
     
     case 'InvertedPendulum'
         

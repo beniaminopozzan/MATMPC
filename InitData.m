@@ -15,6 +15,31 @@ function [input, data] = InitData(settings)
     nbu_idx = settings.nbu_idx;  % Index of control bounds
 
     switch settings.model
+
+        case 'S3agent'
+            [a,b,c,d]=parts(randrot(1));
+            input.x0 = [a;b;c;d;0;0;0];    
+            input.u0 = zeros(nu,1); 
+            input.z0 = zeros(nz,1);
+            [a,b,c,d]=parts(randrot(1));
+            para0 = [a,b,c,d].';  
+
+            Q=repmat([10 1 1 1 .01 .01 .01]',1,N);
+            QN=[10 1 1 1]';
+
+            % upper and lower bounds for states (=nbx)
+            lb_x = [];
+            ub_x = [];
+
+            % upper and lower bounds for controls (=nbu)           
+            lb_u = 20*[-1 -1 -1];
+            ub_u = 20*[1 1 1];
+                       
+            % upper and lower bounds for general constraints (=nc)
+            lb_g = [];
+            ub_g = [];            
+            lb_gN = [];
+            ub_gN = [];
                       
         case 'InvertedPendulum'
             input.x0 = [0;pi;0;0];    
@@ -245,6 +270,10 @@ function [input, data] = InitData(settings)
     %% Reference generation
 
     switch settings.model
+
+        case 'S3agent'
+
+            data.REF=[0 0 0 0 0 0 0];
 
         case 'InvertedPendulum'
 
