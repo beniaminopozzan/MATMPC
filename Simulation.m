@@ -45,7 +45,7 @@ r = 10;
 settings.r = r;      % No. of input blocks (go to InitMemory.m, line 441 to configure)
 
 opt.hessian         = 'Gauss_Newton';  % 'Gauss_Newton', 'Generalized_Gauss_Newton'
-opt.integrator      = 'ERK4'; % 'ERK4','IRK3','IRK3-DAE'
+opt.integrator      = 'IRK3'; % 'ERK4','IRK3'(implicit),'IRK3-DAE'
 opt.condensing      = 'no';  %'default_full','no','blasfeo_full(require blasfeo installed)','partial_condensing'
 opt.qpsolver        = 'hpipm_sparse'; 
 opt.hotstart        = 'no'; %'yes','no' (only for qpoases, use 'no' for nonlinear systems)

@@ -30,7 +30,7 @@ nbx_idx = settings.nbx_idx; % Index of state bounds
 
 %% add more to Settings
 
-N  = 50;
+N  = 40;
 N2 = N;
 r  = 10;
 
@@ -68,10 +68,10 @@ z0 = zeros(nz,1);
 para0 = zeros(max(1,np),1);  
 
 Qp = 5*[1 1 1];
-Qrpy = [0 0 10];
-Qq = 0.1*[1 1 1 1];
+Qrpy = 0*[0.2 0.2 10];
+Qq = [1 1 1 1];
 Qv = 1*[1 1 1];
-Qu = [1 1 1 1]*1e-1;
+Qu = [1 1 1 1]*1e-2;
 W=repmat([Qp Qrpy Qq Qv Qu]',1,N);
 WN=[Qp Qrpy Qq Qv]';
 

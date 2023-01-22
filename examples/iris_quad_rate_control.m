@@ -88,12 +88,14 @@ z_fun = [];
 % implicit ODE: impl_f = 0
 xdot = SX.sym('xdot',nx,1);
 impl_f = xdot - x_dot;
+
+% integratori diversi (vedi orbitali)
      
 %% Objectives and constraints
 
-roll = atan2(2*(q(1)*q(2)+q(3)*q(4)),1-2*(q(2)^2+q(3)^2));
-pitch = asin(2*(q(1)*q(3)-q(4)*q(2)));
-yaw = atan2(2*(q(1)*q(4)+q(2)*q(3)),1-2*(q(3)^2+q(4)^2));
+roll = 0;%atan2(2*(q(1)*q(2)+q(3)*q(4)),1-2*(q(2)^2+q(3)^2));
+pitch = 0;%asin(2*(q(1)*q(3)-q(4)*q(2)));
+yaw = 0;%atan2(2*(q(1)*q(4)+q(2)*q(3)),1-2*(q(3)^2+q(4)^2));
 
 % inner objectives
 h = [
@@ -101,7 +103,7 @@ h = [
     roll
     pitch
     yaw
-    q
+    q'*refsq
     v
     u
     ];
